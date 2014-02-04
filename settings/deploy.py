@@ -1,0 +1,2 @@
+DEBUG = False
+SQLALCHEMY_URI = ''

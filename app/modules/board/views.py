@@ -1,3 +1,8 @@
 from flask import Blueprint
 
-app = Blueprint('board', __name__, url_prefix='/board')
+bp = Blueprint('board', __name__, url_prefix='/board')
+
+
+@bp.route('/')
+def index():
+    return 'index'
