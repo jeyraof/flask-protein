@@ -14,13 +14,14 @@ def create_app(env='deploy'):
     register_blueprints(app)
     db.init_app(app)
     db.app = app
+    db.create_all()
 
     return app
 
 
 def load_configs(machine, env):
-    filename = 'settings.%s.py' % env
-    machine.config.from_pyfile(filename, True)
+    setting = import_module('settings.%s' % env)
+    machine.config.update(setting.config)
 
 
 def register_blueprints(machine):
