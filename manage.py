@@ -5,38 +5,24 @@ manager = Manager(create_app)
 
 
 @manager.command
-@manager.option('-e', '--env', dest='env', help='environment like dev, deploy to loading from settings')
-def create_db(env='deploy'):
+def database(create=False, drop=False):
     """
-    Create db using SQLAlchemy
+    Managing database using SQLAlchemy
     """
-    machine = create_app(env)
-    db = machine.config['db.machine']
-    db.create_all()
-
-
-@manager.command
-@manager.option('-e', '--env', dest='env', help='environment like dev, deploy to loading from settings')
-def drop_db(env='deploy'):
-    """
-    Drop db using SQLAlchemy
-    """
-    create_app(env)
     from app import db
-    db.drop_all()
+    actions = {
+        (True, False): (lambda x: [x.create_all])(db),
+        (False, True): (lambda x: [x.drop_all])(db),
+    }.get((True if create else False, True if drop else False), [])
 
+    if actions:
+        for action in actions:
+            action()
 
-@manager.command
-@manager.option('-e', '--env', dest='env', help='environment like dev, deploy to loading from settings')
-def refresh_db(env='deploy'):
-    """
-    Refresh db using SQLAlchemy
-    """
-    create_app(env)
-    from app import db
-    db.drop_all()
-    db.create_all()
+    else:
+        print u'usage: python manage.py database {--create, --drop}'
 
 
 if __name__ == '__main__':
+    manager.add_option("-s", "--setting", dest="setting", required=False, default='dev')
     manager.run()

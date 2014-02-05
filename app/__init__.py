@@ -3,18 +3,17 @@ Write down application instance initializing.
 """
 
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
 from importlib import import_module
+from app.database import db
 import os
 
 
-def create_app(env='deploy'):
+def create_app(setting):
     app = Flask(__name__, static_path='/static')
-    load_configs(app, env)
+    load_configs(app, setting)
     register_blueprints(app)
     db.init_app(app)
     db.app = app
-    db.create_all()
 
     return app
 
@@ -63,6 +62,3 @@ def load_models(modules):
         print '=> Complete.\n'
     else:
         print 'There is no module to load. Pass the process.'
-
-
-db = SQLAlchemy()
